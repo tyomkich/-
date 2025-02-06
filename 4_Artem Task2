@@ -51,7 +51,6 @@ def prime_factors(n):
             divisor += 1
     return factors
 
-# Приклад: розкласти число 250 на прості множники
 n = 250
 factors = prime_factors(n)
 print(f"Прості множники числа {n}: {factors}")
@@ -93,14 +92,5 @@ formatted_text = format_text_as_header(text)
 print(formatted_text)
 
 #9 task
-def hide_message_in_bits(message, data):
-    message_bits = ''.join(format(ord(char), '08b') for char in message)
-    for i in range(len(message_bits)):
-        data[i] = (data[i] & ~1) | int(message_bits[i])
-    return data
 
-message = "Привіт"
-data = [255] * 100  # Уявне зображення як масив байтів
-modified_data = hide_message_in_bits(message, data)
-print(f"Змінені біти: {modified_data[:len(message)*8]}")
 
