@@ -1,0 +1,55 @@
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List, Optional
+
+app = FastAPI()
+
+# Модель заняття
+class Lesson(BaseModel):
+    id: int
+    subject: str
+    teacher: str
+    day: str  # Наприклад, "Monday"
+    time: str  # Наприклад, "10:00-11:30"
+    classroom: Optional[str] = None
+
+# Фейковий список занять
+schedule: List[Lesson] = []
+
+# Додати нове заняття
+@app.post("/lessons/", response_model=Lesson)
+def add_lesson(lesson: Lesson):
+    for existing_lesson in schedule:
+        if existing_lesson.id == lesson.id:
+            raise HTTPException(status_code=400, detail="Lesson with this ID already exists")
+    schedule.append(lesson)
+    return lesson
+
+# Отримати весь розклад
+@app.get("/lessons/", response_model=List[Lesson])
+def get_schedule():
+    return schedule
+
+# Отримати заняття за днем тижня
+@app.get("/lessons/{day}", response_model=List[Lesson])
+def get_lessons_by_day(day: str):
+    filtered = [lesson for lesson in schedule if lesson.day.lower() == day.lower()]
+    if not filtered:
+        raise HTTPException(status_code=404, detail="No lessons found for this day")
+    return filtered
+
+# Оновити заняття
+@app.put("/lessons/{lesson_id}", response_model=Lesson)
+def update_lesson(lesson_id: int, updated_lesson: Lesson):
+    for i, lesson in enumerate(schedule):
+        if lesson.id == lesson_id:
+            schedule[i] = updated_lesson
+            return updated_lesson
+    raise HTTPException(status_code=404, detail="Lesson not found")
+
+# Видалити заняття
+@app.delete("/lessons/{lesson_id}")
+def delete_lesson(lesson_id: int):
+    global schedule
+    schedule = [lesson for lesson in schedule if lesson.id != lesson_id]
+    return {"message": "Lesson deleted successfully"}
