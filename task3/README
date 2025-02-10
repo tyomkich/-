@@ -1,0 +1,14 @@
+
+Instal Dependencies
+pip install fastapi uvicorn
+```
+
+To start the FastAPI server, run:
+uvicorn main:app --reload
+```
+This will launch the API on `http://127.0.0.1:8000/`.
+
+After running the server, you can test API endpoints using:
+Swagger UI:** `http://127.0.0.1:8000/docs`
+ReDoc UI:** `http://127.0.0.1:8000/redoc`
+
